@@ -1,16 +1,21 @@
 const express = require("express");
 
-
 const classController = require("../Controller/classController");
+const {
+  insertClassValidation,
+  updateClassValidation,
+  deleteClassValidation,
+} = require("../Middlewares/Validations/classValidation");
+const validator = require("../Middlewares/Validations/validator");
 
 const router = express.Router();
 
 router
   .route("/class")
   .get(classController.getAllClass)
-  .post(classController.addNewClass)
-  .put(classController.updateClassData)
-  .delete(classController.deleteClassData);
+  .post(insertClassValidation, validator, classController.addNewClass)
+  .put(updateClassValidation, validator, classController.updateClassData)
+  .delete(deleteClassValidation, validator, classController.deleteClassData);
 
 router.route("/class/:id").get(classController.getClassById);
 

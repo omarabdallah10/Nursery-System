@@ -12,8 +12,16 @@ exports.getAllChildren = (request, response, next) => {
 
 //Add child
 exports.addNewChild = (request, response, next) => {
+  // response.json({body: request.body, file: request.file});
+
   //create object from child schema
-  const object = new Child(request.body);
+  const object = new Child({
+    _id: request.body.id,
+    name: request.body.name,
+    age: request.body.age,
+    class: request.body.class,
+    image: request.file.filename,
+  });
 
   //save the object to the database
   object
@@ -28,13 +36,28 @@ exports.addNewChild = (request, response, next) => {
 
 //update child data
 exports.updateChildData = (request, response, next) => {
-  Child.findByIdAndUpdate(request.params.id, request.body)
+  //update the child data included the image
+  Child.findByIdAndUpdate(request.params.id, {
+    name: request.body.name,
+    age: request.body.age,
+    class: request.body.class,
+    image: request.file.filename,
+  })
     .then((data) => {
-      if (!data) 
-        throw new Error("No child found with that id");
-      response.status(201).json({ message: "Child updated successfully", data });
+      if (!data) throw new Error("No child found with that id");
+      response
+        .status(201)
+        .json({ message: "Child updated successfully", data });
     })
     .catch((error) => next(error));
+  // Child.findByIdAndUpdate(request.params.id, request.body)
+  //   .then((data) => {
+  //     if (!data) throw new Error("No child found with that id");
+  //     response
+  //       .status(201)
+  //       .json({ message: "Child updated successfully", data });
+  //   })
+  //   .catch((error) => next(error));
   // response.json({ data: "Update child data" });
 };
 
