@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
     name: String,
     age: Number,
     class:{type: Number, ref: "classes"}, //ref to the department collection
+    image: String
 });
 
 module.exports = mongoose.model("childern", schema); //childern is the collection name in the db

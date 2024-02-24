@@ -26,7 +26,13 @@ exports.getTeacherById = (request, response, next) => {
 
 //add a new teacher
 exports.addNewTeacher = (request, response, next) => {
-  const object = new Teacher(request.body);
+  const object = new Teacher({
+    _id: request.body.id,
+    name: request.body.name,
+    age: request.body.age,
+    class: request.body.class,
+    image: request.file.filename,
+  });
   object
     .save()
     .then((data) => {
@@ -38,7 +44,13 @@ exports.addNewTeacher = (request, response, next) => {
 
 //update a teacher
 exports.updateTeacher = (request, response, next) => {
-  Teacher.findByIdAndUpdate(request.params.id, request.body)
+  //update the teacher data included the image
+  Teacher.findByIdAndUpdate(request.params.id, {
+    name: request.body.name,
+    age: request.body.age,
+    class: request.body.class,
+    image: request.file.filename,
+  })
     .then((data) => {
       if (!data) throw new Error("No teacher found with that id");
       response
