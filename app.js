@@ -7,9 +7,7 @@ const multer = require("multer");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
-
 require("dotenv").config();
-
 //authentication middleware
 const authenticationMW = require("./Middlewares/authenticationMW");
 const teacherRouter = require("./Route/teacherRoute");
@@ -67,14 +65,11 @@ server.use(cors());
 server.use(morgan("dev"));
 /*---------------------------------Middlewares---------------------------------*/
 
-//middleware has its next()
-// server.use(morgan("dev"));
-
-//1- Middleware for starting the server
-server.use((request, response, next) => {
-  console.log("First Use Function", request.url, request.method);
-  next();
-});
+// //1- Middleware for starting the server
+// server.use((request, response, next) => {
+//   console.log("First Use Function", request.url, request.method);
+//   next();
+// });
 
 //2- Middleware for authentication
 server.use((request, response, next) => {
@@ -83,6 +78,7 @@ server.use((request, response, next) => {
 });
 
 /*---------------------------------Testing---------------------------------*/
+
 
 server.use(multer({ storage, fileFilter }).single("image")); //middleware for parsing the body of the request
 server.use(express.json()); //middleware for parsing the body of the request
@@ -93,28 +89,16 @@ server.use(express.urlencoded({ extended: true })); //middleware for parsing the
 server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //- Routers
-// server.use(authenticationMW);
+server.use(authenticationMW);
 server.use(teacherRouter);
 server.use(childRouter);
 server.use(classRouter);
 
 //3- Middleware for Not Found Case
 server.use((request, response, next) => {
-  console.log("Not Found Middleware");
   response.status(404).json({ message: "Not Found" }); //server response -- No need for next()
 });
 
-/*---------------------------------Routes---------------------------------*/
-
-// server.get("/users",(request,response)=> {
-//   response.status(200).json({message: "Success hitting users"});
-// })
-
-// server.get("/", (request,response)=>{
-//   response.status(200).json({message:"Route success"})
-// })
-
-/*---------------------------------Error Handling---------------------------------*/
 //4- Middleware for Error Handling
 server.use((error, request, response, next) => {
   // console.log("Error Handling Middleware");

@@ -13,6 +13,16 @@ exports.insertTeacherValidation = [
     .isString()
     .isLength({ min: 8, max: 20 })
     .withMessage("Password must be a string and between 8 to 20 characters"),
+  body("email")
+    .isEmail()
+    .withMessage("Invalid email")
+    .custom((value) => {
+      return Teacher.findOne({ email: value }).then((teacher) => {
+        if (teacher) {
+          return Promise.reject("Email already exists");
+        }
+      });
+    }),
 ];
 
 exports.updateTeacherValidation = [
@@ -27,6 +37,16 @@ exports.updateTeacherValidation = [
     .isString()
     .isLength({ min: 8, max: 20 })
     .withMessage("Password must be a string and between 8 to 20 characters"),
+  body("email")
+    .isEmail()
+    .withMessage("Invalid email")
+    .custom((value) => {
+      return Teacher.findOne({ email: value }).then((teacher) => {
+        if (teacher) {
+          return Promise.reject("Email already exists");
+        }
+      });
+    }),
 ];
 
 exports.deleteTeacherValidation = [
