@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
+    //object id 
     _id: Number,
     name: String,
     password: String,
-    class: { type: Number, ref: "classes" },
+    email:{type: String, required: true, unique: true, lowercase: true},
     image: String
 });
 
