@@ -1,6 +1,4 @@
-const jwr = require("jsonwebtoken");
-
-const api_key = process.env.SECRET_KEY;
+const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {

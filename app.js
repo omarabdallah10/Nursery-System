@@ -3,13 +3,11 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const multer = require("multer");
-const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
 require("dotenv").config();
-//authentication middleware
 const authenticationMW = require("./Middlewares/authenticationMW");
+const multerMW = require("./Middlewares//multer");
 const teacherRouter = require("./Route/teacherRoute");
 const childRouter = require("./Route/childRoute");
 const classRouter = require("./Route/classRoute");
@@ -19,32 +17,6 @@ const server = express();
 
 const port = process.env.PORT || 8080; //to de dynamic during future hosting
 const databaseURL = process.env.DATABASE_URL;
-
-//image variables:
-//1- storage
-const storage = multer.diskStorage({
-  destination: (request, file, cb) => {
-    cb(null, path.join(__dirname, "Images"));
-  },
-  filename: (request, file, cb) => {
-    cb(
-      null,
-      new Date().toLocaleDateString().replace(/\//g, "-") +
-        "-" +
-        file.originalname
-    );
-  },
-});
-//2- fileFilter
-const fileFilter = (request, file, cb) => {
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg"
-  )
-    cb(null, true);
-  else cb(null, false);
-};
 
 //connect to the database
 mongoose
@@ -71,21 +43,13 @@ server.use(morgan("dev"));
 //   next();
 // });
 
-//2- Middleware for authentication
-server.use((request, response, next) => {
-  console.log("Authentication Middleware");
-  next();
-});
-
 /*---------------------------------Testing---------------------------------*/
 
-
-server.use(multer({ storage, fileFilter }).single("image")); //middleware for parsing the body of the request
+server.use(multerMW.single("image")); //middleware for parsing the body of the request
 server.use(express.json()); //middleware for parsing the body of the request
 server.use(express.urlencoded({ extended: true })); //middleware for parsing the body of the request
 
 //swagger
-
 server.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //- Routers
